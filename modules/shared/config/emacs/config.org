@@ -1491,3 +1491,354 @@ Found [[https://emacs.stackexchange.com/questions/44664/apply-ansi-color-escape-
       ([remap describe-command] . helpful-command)
       ([remap describe-key] . helpful-key))
 #+END_SRC
+
+** email settings.
+** email
+*** initial config
+#+begin_src emacs-lisp
+;; load mu4e from the installation path.
+;; yours might differ check with the Emacs installation
+                                        ;(use-package mu4e
+                                        ;  :load-path  "/usr/local/share/emacs/site-lisp/mu/mu4e/")
+                                        ;(add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu/mu4e")
+;; (add-to-list 'load-path "/opt/homebrew/Cellar/mu/1.10.8/share/emacs/site-lisp/mu/mu4e/")
+(add-to-list 'load-path "/nix/store/5cqpq7q9yjmsdgdmchl4p3vq9advb5kz-emacs-mu4e-1.10.8/share/emacs/site-lisp/elpa/mu4e-1.10.8/")
+(require 'mu4e)
+                                        ; for sending mails
+(require 'smtpmail)
+#+end_src
+*** general setting
+#+begin_src emacs-lisp
+;; we installed this with homebrew
+;; (after! mu4e
+        ;; (evil-define-key* '(emacs) mu4e-main-mode-map (kbd "SPC") 'doom/leader)
+        ;; (evil-define-key* '(emacs) mu4e-headers-mode-map (kbd "SPC") 'doom/leader)
+        ;; )
+(setq mu4e-mu-binary "/Users/alarawms/.nix-profile/bin/mu")
+
+;; this is the directory we created before:
+(setq mu4e-root-maildir "~/.mail")
+
+;; this command is called to sync imap servers:
+(setq mu4e-get-mail-command "offlineimap -q")
+;; how often to call it in seconds:
+(setq mu4e-update-interval 300)
+
+;; save attachment to desktop by default
+;; or another choice of yours:dir
+(setq mu4e-attachment-dir "~/Downloads/emails/")
+
+;; rename files when moving - needed for mbsync:
+(setq mu4e-change-filenames-when-moving t)
+
+;; list of your email adresses:
+(setq mu4e-personal-addresses '("m@malarawi.sa"
+                                "mohammed.alarawi@kaust.edu.sa"
+                                "alarawms@gmx.com"
+                                "m@thuwalbio.sa"))
+
+(add-hook 'org-mode-hook 'turn-on-flyspell)
+(add-hook 'org-mode-hook 'turn-on-auto-fill)
+(add-hook 'mu4e-compose-mode-hook 'turn-on-flyspell)
+(add-hook 'mu4e-compose-mode-hook 'turn-on-auto-fill)
+(setq dired-guess-shell-alist-user '(("" "open")))
+#+end_src
+
+*** favorite and bookmarks
+#+begin_src emacs-lisp
+
+#+end_src
+
+*** mu4e context
+#+begin_src emacs-lisp
+(setq mu4e-contexts
+      `(,(make-mu4e-context
+          :name "malarawi.sa"
+          :enter-func
+          (lambda () (mu4e-message "Enter m@malarawi.sa context"))
+          :leave-func
+          (lambda () (mu4e-message "Leave m@malarawi.sa context"))
+          :match-func
+          (lambda (msg)
+            (when msg
+              (mu4e-message-contact-field-matches msg
+                                                  :to "m@malarawi.sa")))
+          :vars '((user-mail-address . "m@malarawi.sa" )
+                  (user-full-name . "Mohammed Alarawi")
+                  (mu4e-drafts-folder . "/m@malarawi.sa/Drafts")
+                  (mu4e-refile-folder . "/m@malarawi.sa/Archive")
+                  (mu4e-sent-folder . "/m@malarawi.sa/Sent")
+                  (mu4e-trash-folder . "/m@malarawi.sa/Trash")))
+
+        ,(make-mu4e-context
+          :name "kaust.edu.sa"
+          :enter-func
+          (lambda () (mu4e-message "Enter mohammed.alarawi@kaust.edu.sa context"))
+          :leave-func
+          (lambda () (mu4e-message "Leave mohammed.alarawi@kaust.edu.sa context"))
+          :match-func
+          (lambda (msg)
+            (when msg
+              (mu4e-message-contact-field-matches msg
+                                                  :to "mohammed.alarawi@kaust.edu.sa")))
+          :vars '((user-mail-address . "mohammed.alarawi@kaust.edu.sa")
+                  (user-full-name . "Mohammed Alarawi")
+                  (mu4e-drafts-folder . "/mohammed.alarawi@kaust.edu.sa/Drafts")
+                  (mu4e-refile-folder . "/mohammed.alarawi@kaust.edu.sa/Archive")
+                  (mu4e-sent-folder . "/mohammed.alarawi@kaust.edu.sa/Sent")
+                  (mu4e-trash-folder . "/mohammed.alarawi@kaust.edu.sa/Trash")))
+        ,(make-mu4e-context
+          :name "thuwalbio.sa"
+          :enter-func
+          (lambda () (mu4e-message "Enter alarawms@thuwalbio.sa context"))
+          :leave-func
+          (lambda () (mu4e-message "Leave alarawms@thuwalbio.sa context"))
+          :match-func
+          (lambda (msg)
+            (when msg
+              (mu4e-message-contact-field-matches msg
+                                                  :to "alarawms@thuwalbio.sa")))
+          :vars '((user-mail-address . "alarawms@thuwalbio.sa")
+                  (user-full-name . "Mohammed Alarawi")
+                  (mu4e-drafts-folder . "/alarawms@thuwalbio.sa/Drafts")
+                  (mu4e-refile-folder . "/alarawmm@thuwalbio.sa/Archive")
+                  (mu4e-sent-folder . "/alarawms@thuwalbio.sa/Sent")
+                  (mu4e-trash-folder . "/alarawms@thuwalbio.sa/Trash")))
+
+        ,(make-mu4e-context
+          :name "alarawms@gmx.com"
+          :enter-func
+          (lambda () (mu4e-message "Enter alarawms@gmx.com context"))
+          :leave-func
+          (lambda () (mu4e-message "Leave alarawms@gmx.com context"))
+          :match-func
+          (lambda (msg)
+            (when msg
+              (mu4e-message-contact-field-matches msg
+                                                  :to "alarawms@gmx.com")))
+          :vars '((user-mail-address . "alarawms@gmx.com")
+                  (user-full-name . "Mohammed")
+                  ;; check your ~/.maildir to see how the subdirectories are called
+                  ;; e.g `ls ~/.maildir/alarawms@gmx.com'
+                  (mu4e-drafts-folder . "/alarawms@gmx.com/Drafts")
+                  (mu4e-refile-folder . "/alarawms@gmx.com/Archive")
+                  (mu4e-sent-folder . "/alarawms@gmx.com/Sent")
+                  (mu4e-trash-folder . "/alarawms@gmx.com/Trash")))))
+
+(setq mu4e-context-policy 'pick-first) ;; start with the first (default) context;
+(setq mu4e-compose-context-policy 'ask) ;; ask for context if no context matches;
+#+end_src
+
+*** sending emails
+#+begin_src emacs-lisp
+;; gpg encryptiom & decryption:
+;; this can be left alone
+;; don't keep message compose buffers around after sending:
+(setq message-kill-buffer-on-exit t)
+
+;; send function:
+(setq send-mail-function 'message-send-mail-with-sendmail
+      message-send-mail-function 'message-send-mail-with-sendmail)
+
+
+;; send program:
+;; this is exeranal. remember we installed it before.
+(setq sendmail-program (executable-find "msmtp"))
+
+;; select the right sender email from the context.
+(setq message-sendmail-envelope-from 'header)
+
+;; chose from account before sending
+;; this is a custom function that works for me.
+;; well I stole it somewhere long ago.
+;; I suggest using it to make matters easy
+;; of course adjust the email adresses and account descriptions
+(defun timu/set-msmtp-account ()
+  (if (message-mail-p)
+      (save-excursion
+        (let*
+            ((from (save-restriction
+                     (message-narrow-to-headers)
+                     (message-fetch-field "from")))
+             (account
+              (cond
+               ((string-match "m@malarawi.sa" from) "m@malarawi.sa")
+               ((string-match "alarawms@thuwalbio.sa" from) "alarawms@thuwalbio.sa")
+               ((string-match "mohammed.alarawi@kaust.edu.sa" from) "mohammed.alarawi@kaust.edu.sa")
+               ((string-match "alarawms@gmx.com" from) "alarawms@gmx.com"))))
+          (setq message-sendmail-extra-arguments (list '"-a" account))))))
+
+(add-hook 'message-send-mail-hook 'timu/set-msmtp-account)
+
+;; mu4e cc & bcc
+;; this is custom as well
+(add-hook 'mu4e-compose-mode-hook
+          (defun timu/add-cc-and-bcc ()
+            "My Function to automatically add Cc & Bcc: headers.
+          This is in the mu4e compose mode."
+            (save-excursion (message-add-header "Cc:\n"))
+            (save-excursion (message-add-header "Bcc:\n"))))
+
+;; mu4e address completion
+;; (add-hook 'mu4e-compose-mode-hook 'company-mode)
+;; start with the first (default) context:
+(customize-set-variable 'mu4e-context-policy 'pick-first)
+;; ask for context if no context matches:
+(customize-set-variable 'mu4e-compose-context-policy 'ask)
+
+
+#+End_src
+
+*** attachement management
+#+begin_src emacs-lisp
+
+(defun timu-mu4e-view-save-attachment ()
+  "Save one attachements in a selected directory using `read-directory-name'.
+This is a modified version of `mu4e-view-save-attachments'."
+  (interactive)
+  (cl-assert (and (eq major-mode 'mu4e-view-mode)
+                  (derived-mode-p 'gnus-article-mode)))
+  (let* ((parts (mu4e--view-gather-mime-parts))
+         (handles '())
+         (files '())
+         dir)
+    (dolist (part parts)
+      (let ((fname (cdr (assoc 'filename (assoc "attachment" (cdr part))))))
+        (when fname
+          (push `(,fname . ,(cdr part)) handles)
+          (push fname files))))
+    (if files
+        (progn
+          (setq files (completing-read-multiple "Save part(s): " files)
+                dir (read-directory-name "Save to directory: "))
+          (cl-loop for (f . h) in handles
+                   when (member f files)
+                   do (mm-save-part-to-file h (expand-file-name f dir))))
+      (mu4e-message "No attached files found"))))
+
+(defun timu-mu4e-view-save-attachments ()
+  "Save All Attachements in a selected directory using `read-directory-name'.
+This is a modified version of `mu4e-view-save-attachments'."
+  (interactive)
+  (cl-assert (and (eq major-mode 'mu4e-view-mode)
+                  (derived-mode-p 'gnus-article-mode)))
+  (let* ((parts (mu4e--view-gather-mime-parts))
+         (handles '())
+         (files '())
+         dir)
+    (dolist (part parts)
+      (let ((fname (cdr (assoc 'filename (assoc "attachment" (cdr part))))))
+        (when fname
+          (push `(,fname . ,(cdr part)) handles)
+          (push fname files))))
+    (if files
+        (progn
+          (setq dir (read-directory-name "Save to directory: "))
+          (cl-loop for (f . h) in handles
+                   when (member f files)
+                   do (mm-save-part-to-file h (expand-file-name f dir))))
+      (mu4e-message "No attached files found"))))
+
+(defun timu-mu4e-attach-file ()
+  "Attach a file to an email.
+Use the built-in function `mml-attach-file'."
+  (interactive)
+  (let ((default-directory "~/"))
+    (let ((file (read-file-name "Select a file to attach: ")))
+      (mml-attach-file (expand-file-name file)))))
+
+
+#+end_src
+
+*** mu4e alrert
+
+#+begin_src emacs-lisp
+
+;;Attchment management in mu4e
+(defun ok/message-attachment-present-p ()
+  "Return t if a non-gpg attachment is found in the current message."
+  (save-excursion
+    (save-restriction
+      (widen)
+      (goto-char (point-min))
+      (when (search-forward "<#part type" nil t) t))))
+
+(setq ok/message-attachment-regexp
+      (regexp-opt '("[Ww]e send"
+                    "[Ii] send"
+                    "attach"
+                    "angehaengt"
+                    "مرفقات")))
+
+(defun ok/message-warn-if-no-attachments ()
+  "Check if there is an attachment in the message if I claim it."
+  (when (and (save-excursion
+               (save-restriction
+                 (widen)
+                 (goto-char (point-min))
+                 (re-search-forward ok/message-attachment-regexp nil t)))
+             (not (ok/message-attachment-present-p)))
+    (unless (y-or-n-p "No attachment. Send the message?")
+      (keyboard-quit))))
+
+
+                                        ;show icons for mu4e
+;; (use-package mu4e-marker-icons
+;; )
+(use-package mu4e-column-faces
+  :after mu4e
+  :config (mu4e-column-faces-mode))
+;; enable the gnus message view "tech preview"
+
+
+;; Email alert
+(use-package mu4e-alert
+  :after mu4e
+  :config
+  (add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display))
+
+#+end_src
+
+*** mu4e ical
+#+begin_src emacs-lisp
+(require 'mu4e-icalendar)
+(mu4e-icalendar-setup)
+(setq mu4e-icalendar-trash-after-reply t)
+
+(setq gnus-icalendar-org-capture-file "~/Org/event.org")
+(setq gnus-icalendar-org-capture-headline '("Calendar"))
+(gnus-icalendar-org-setup)
+#+end_src
+
+** bibliography
+#+begin_src emacs-lisp
+(use-package citar
+  :ensure t)
+(use-package citar-org-roam
+  :ensure t)
+(use-package citar-embark
+  :ensure t)
+(setq org-cite-csl-styles-dir "~/Zotero/styles")
+
+
+(setq bibtex-completion-bibliography '("~/.emacs.d/org/ref/library.bib"))
+
+(setq citar-bibliography '("~/.emacs.d/org/ref/library.bib"))
+
+;You may also set the respective note and library path variables as well for enhanced functionality:
+(setq bibtex-completion-library-path '("~/.emacs.d/org/ref/library.bib")
+       bibtex-completion-notes-path "~/.emacs.d/org/ref/notes/"
+       bibtex-completion-additional-search-fields '(keywords)
+    bibtex-completion-display-formats
+    '((article       . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${journal:40}")
+      (inbook        . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} Chapter ${chapter:32}")
+      (incollection  . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${booktitle:40}")
+      (inproceedings . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*} ${booktitle:40}")
+      (t             . "${=has-pdf=:1}${=has-note=:1} ${year:4} ${author:36} ${title:*}"))
+    bibtex-completion-pdf-open-function
+    (lambda (fpath)
+      (call-process "open" nil 0 nil fpath)))
+
+(setq citar-library-paths '("~/Zotero/storage/")
+       citar-notes-paths '("~/.emacs.d/org/ref/notes/"))
+#+End_src
