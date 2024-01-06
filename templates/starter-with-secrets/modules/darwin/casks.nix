@@ -4,14 +4,10 @@ _:
   # Development Tools
   "homebrew/cask/docker"
   "insomnia"
-  "ngrok"
   "postico"
   "visual-studio-code"
 
   # Communication Tools
-  "discord"
-  "loom"
-  "notion"
   "slack"
   "telegram"
   "zoom"
@@ -29,8 +25,7 @@ _:
   "asana"
 
   # Browsers
-  "google-chrome"
-
+  "firefox"
   # AI
   "diffusionbee"
 ]
