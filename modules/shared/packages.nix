@@ -33,13 +33,11 @@ with pkgs; [
 
   # Cloud-related tools and SDKs
   # docker
-  # docker-compose
-  awscli2
+  # docker-
   flyctl
   google-cloud-sdk
   go
   gopls
-  ngrok
   ssm-session-manager-plugin
   terraform
   terraform-ls
@@ -61,10 +59,6 @@ with pkgs; [
   pngquant
 
   # PHP
-  php82
-  php82Packages.composer
-  php82Packages.php-cs-fixer
-  phpunit
 
   # Node.js development tools
   fzf

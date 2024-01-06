@@ -3,7 +3,7 @@
 
 * Configuration   :emacs:
 ** About my Emacs
-This is my detailed Emacs configuration. It's an ~org~ file that is transpiled to ~emacs-lisp~ as part of the Nix build process. 
+This is my detailed Emacs configuration. It's an ~org~ file that is transpiled to ~emacs-lisp~ as part of the Nix build process.
 
 Why an org file? My Emacs config is large, and this enables me to greatly improve readability of its documentation. I edit this file the same way you're reading it (nicely formatted) as I use Emacs and Emacs speaks org. Sounds complicated, but it's really not; [[https://github.com/dustinlyons/nixos-config/blob/main/nixos/default.nix#L215][just a few lines]] in my Nix config. [[https://github.com/dustinlyons/nixos-config/blob/main/darwin/default.nix#L28][MacOS too.]]
 
@@ -16,8 +16,8 @@ Just me!
 
 #+NAME: personal-info
 #+BEGIN_SRC emacs-lisp
-  (setq user-full-name "Dustin Lyons"
-    user-mail-address "dustin@dlyons.dev")
+  (setq user-full-name "Mohammed Alarawi"
+    user-mail-address "m@malarawi.sa")
 #+END_SRC
 
 ** Initialization
@@ -84,8 +84,8 @@ This associates our package manager with the right source (MELPA).
 
   ;; Set path for darwin
   (when (system-is-mac)
-    (setenv "PATH" (concat (getenv "PATH") ":/Users/dustin/.nix-profile/bin:/usr/bin"))
-    (setq exec-path (append '("/Users/dustin/bin" "/profile/bin" "/Users/dustin/.npm-packages/bin" "/Users/dustin/.nix-profile/bin" "/nix/var/nix/profiles/default/bin" "/usr/local/bin" "/usr/bin") exec-path)))
+    (setenv "PATH" (concat (getenv "PATH") ":/Users/alarawms/.nix-profile/bin:/usr/bin"))
+    (setq exec-path (append '("/Users/alarawms/bin" "/opt/homebrew/bin" "/profile/bin" "/Users/alarawms/.npm-packages/bin" "/Users/alarawms/.nix-profile/bin" "/nix/var/nix/profiles/default/bin" "/usr/local/bin" "/usr/bin") exec-path)))
 #+END_SRC
 
 *** Counsel/Ivy framework
@@ -365,6 +365,7 @@ JetBrains Mono 4 life.
   (setq dashboard-startup-banner 'ascii
         dashboard-center-content t
         dashboard-items '((projects . 5)
+                          (todo . 5)
                            (recents  . 5)))
   (setq dashboard-set-footer nil))
 
@@ -375,7 +376,7 @@ JetBrains Mono 4 life.
   (setq initial-buffer-choice (lambda ()
                                   (get-buffer-create "*dashboard*")
                                   (dashboard-refresh-buffer)))
-  (setq dashboard-projects-switch-function 'counsel-projectile-switch-project-by-name)
+(setq dashboard-projects-switch-function 'counsel-projectile-switch-project-by-name)
 #+END_SRC
 
 ** Keybindings
@@ -731,7 +732,7 @@ These are templates used to create new notes.
 #+BEGIN_SRC emacs-lisp
   (require 'ucs-normalize)
   (use-package org-roam
-    :straight (:host github :repo "dustinlyons/org-roam"
+    :straight (:host github :repo "org-roam/org-roam"
                :branch "master"
                :files (:defaults "extensions/*")
     :build (:not compile))
@@ -1098,7 +1099,7 @@ Projectile enables me to organize projects with a killer grep interface.
     :custom
       ((projectile-completion-system 'ivy))
     :bind-keymap
-	    ("C-c p" . projectile-command-map)
+        ("C-c p" . projectile-command-map)
     :init
       (setq projectile-enable-caching t)
       (setq projectile-sort-order 'recently-active)
@@ -1371,63 +1372,8 @@ Rainbow mode is an Emacs minor mode to highlight the color shown by a RGB hex tr
   (add-hook 'go-mode-hook 'dl/go-mode-hook)
 #+END_SRC
 
-**** PHP
-#+NAME: php-config
-#+BEGIN_SRC emacs-lisp
-(use-package php-mode
-  :ensure t
-  :config
-    (add-hook 'php-mode-hook 'lsp-mode-deferred))
 
-(use-package php-cs-fixer
-  :ensure t
-  :config
-    (setq php-cs-fixer-rules-fixer-part-options '("multiline_whitespace_before_semicolons" "concat_space")))
-
-(require 'cl)
-(add-hook 'before-save-hook 'php-cs-fixer-before-save)
-;; Adjust auto-mode-alist to use php-mode for PHP files
-(add-to-list 'auto-mode-alist '("\\.php$" . php-mode))
-#+END_SRC
-
-**** Javascript / Typescript
-#+NAME: javascript
-#+BEGIN_SRC emacs-lisp
-  (use-package pnpm-mode)
-  (use-package prisma-mode
-    :straight (:host github :repo "pimeys/emacs-prisma-mode"
-               :branch "main"))
-
-  (use-package web-mode
-    :hook (web-mode . lsp-deferred))
-
-  (add-to-list 'auto-mode-alist '("\\.jsx?$" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.tsx$" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.ts$" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.js$" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.mjs$" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.html$" . web-mode))
-  (add-to-list 'auto-mode-alist '("\\.vue\\'" . web-mode))
-
-  (defun web-mode-init-hook ()
-    "Hooks for Web mode.  Adjust indent."
-    (setq web-mode-markup-indent-offset 2))
-  (add-hook 'web-mode-hook  'web-mode-init-hook)
-
-  ;; Vue.js / Nuxt.js Language Server
-  (straight-use-package
-   '(lsp-volar :type git :host github :repo "jadestrong/lsp-volar"))
-
-  (add-hook 'typescript-mode-hook #'lsp-deferred)
-
-  ;; Keeps indentation organized across these modes
-  (use-package prettier-js)
-  (add-hook 'js2-mode-hook 'prettier-js-mode)
-  (add-hook 'web-mode-hook 'prettier-js-mode)
-  (add-hook 'css-mode-hook 'prettier-js-mode)
-#+END_SRC
-
-*** Git
+**** Git
 #+NAME: magit-git
 #+BEGIN_SRC emacs-lisp
   (use-package magit
@@ -1484,15 +1430,16 @@ These packages may come and go, but ultimately aid in my understanding of emacs 
 *** org-babel
 **** Load languages to run in org mode code blocks
 #+BEGIN_SRC emacs-lisp
-  (with-eval-after-load 'org
-    (org-babel-do-load-languages
-    'org-babel-load-languages
-    '(
-      (emacs-lisp . t)
-      (python . t)
-      (sql . t)
-      (shell . t)))
-   )
+(with-eval-after-load 'org
+  (org-babel-do-load-languages
+  'org-babel-load-languages
+  '(
+    (emacs-lisp . t)
+    (python . t)
+    (sql . t)
+    (r . t)
+    (shell . t)))
+ )
 #+END_SRC
 
 **** ANSI color codes in org babel shell output

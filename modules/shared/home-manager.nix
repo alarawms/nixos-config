@@ -1,8 +1,8 @@
 { config, pkgs, lib, ... }:
 
-let name = "Dustin Lyons";
-    user = "dustin";
-    email = "dustin@dlyons.dev"; in
+let name = "Mohammed Alarawi";
+    user = "alarawms";
+    email = "m@malarawi.sa"; in
 {
   # Shared shell configuration
   zsh = {
@@ -51,8 +51,6 @@ let name = "Dustin Lyons";
           emacsclient -t "$@"
       }
 
-      # Laravel Artisan
-      alias art='php artisan'
 
       # Use difftastic, syntax-aware diffing
       alias diff=difft
@@ -75,8 +73,8 @@ let name = "Dustin Lyons";
     };
     extraConfig = {
       init.defaultBranch = "main";
-      core = { 
-	    editor = "vim";
+      core = {
+      editor = "vim";
         autocrlf = "input";
       };
       commit.gpgsign = true;
